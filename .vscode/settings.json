@@ -1,0 +1,5 @@
+{
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
+  "appService.defaultWebAppToDeploy": "/subscriptions/18223140-439f-4509-93f5-9529ea3fb095/resourceGroups/Exceliant_Demo/providers/Microsoft.Web/sites/apisrv",
+  "appService.deploySubpath": "."
+}
