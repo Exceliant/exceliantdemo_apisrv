@@ -21,11 +21,11 @@ const msalConfig = {
  * https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow 
  */
 const tokenRequest = {
-	scopes: [process.env.GRAPH_ENDPOINT + '.default'], // e.g. 'https://graph.microsoft.com/.default'
+	scopes: [process.env.DATAVERSE_ENDPOINT + '.default'], // e.g. 'https://graph.microsoft.com/.default'
 };
 
 const apiConfig = {
-	uri: process.env.GRAPH_ENDPOINT + 'api/data/v9.2', // e.g. 'https://graph.microsoft.com/v1.0/users'
+	uri: process.env.DATAVERSE_ENDPOINT + 'api/data/v9.2', // e.g. 'https://graph.microsoft.com/v1.0/users'
 };
 
 /**
