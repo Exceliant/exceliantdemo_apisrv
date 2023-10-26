@@ -96,9 +96,6 @@ module.exports = {
   findContact: (async (req,res) => {
     try {
         const oid = req._parsedUrl.query;
-        //console.log("reqBody:", oid);
-        //apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid,'8ca3fdec-8164-4999-8e8a-9d0b58d50b13')";
-        
         apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid," + `'${oid}'` + ")";
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
@@ -109,7 +106,7 @@ module.exports = {
         const body = {"lastname": "Struts"};
         const patchApiUri = apiConfig.uri + "/contacts(" + contactId + ")";
         const response1 = await patchApi(patchApiUri, body, authResponse.accessToken);
-        console.log("updatedContact:", response1);
+        res.status(200).send(JSON.stringify(response1.data))
 
     } catch (error) {
         console.log(error);
