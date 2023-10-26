@@ -40,9 +40,10 @@ app.get(
   dataverseapi.getContacts
 );
 
-app.get(
+app.post(
   "/dataverse/contact",
-  dataverseapi.findContact
+  guard.validateIdTokenClaims,
+  dataverseapi.updateContact
 );
 
 

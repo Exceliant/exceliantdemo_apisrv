@@ -93,17 +93,21 @@ module.exports = {
     }
   }),
 
-  findContact: (async (req,res) => {
+  updateContact: (async (req,res) => {
+    // find user by B2C objectId to get contactId
     try {
-        const oid = req._parsedUrl.query;
-        apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid," + `'${oid}'` + ")";
+        // const oid = req._parsedUrl.query;
+        const sub = req.body.idTokenClaims.sub;
+        const firstname = req.body.idTokenClaims.firstname;
+        const lastname = req.body.idTokenClaims.lastname;
+        apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid," + `'${sub}'` + ")";
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
         //res.status(200).send(JSON.stringify(response.data));
         
         // Update user
         contactId = response.data.value[0].contactid;
-        const body = {"lastname": "Struts"};
+        const body = {"firstname" : firstname, "lastname": lastname};
         const patchApiUri = apiConfig.uri + "/contacts(" + contactId + ")";
         const response1 = await patchApi(patchApiUri, body, authResponse.accessToken);
         res.status(200).send(JSON.stringify(response1.data))
