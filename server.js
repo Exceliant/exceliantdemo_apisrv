@@ -37,13 +37,20 @@ app.patch(
 
 app.get(
   "/dataverse/contacts",
+  guard.validateIdTokenClaims,
   dataverseapi.getContacts
 );
 
 app.post(
-  "/dataverse/contact",
+  "/dataverse/updatecontact",
   guard.validateIdTokenClaims,
   dataverseapi.updateContact
+);
+
+app.post(
+  "/dataverse/createcontact",
+  guard.validateIdTokenClaims,
+  dataverseapi.createContact
 );
 
 

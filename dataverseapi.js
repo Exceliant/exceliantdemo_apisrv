@@ -54,13 +54,11 @@ async function getApi(endpoint, accessToken) {
             Authorization: `Bearer ${accessToken}`
         }
     };
-    //console.log('request made to web API at: ' + new Date().toString());
     try {
         const response = await axios.get(endpoint, options);
         return response;
     } catch (error) {
-        console.log(error)
-        return error;
+        throw error;
     }
 };
 
@@ -71,15 +69,29 @@ async function patchApi(endpoint, body, accessToken) {
             "Prefer": "return=representation"
         }
     };
-    //console.log('request made to web API at: ' + new Date().toString());
     try {
         const response = await axios.patch(endpoint, body, options);
         return response;
     } catch (error) {
-        console.log(error)
-        return error;
+        throw error;
     }
 };
+
+async function createApi(endpoint, body, accessToken) {
+    const options = {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Prefer": "return=representation"
+        }
+    };
+    try {
+        const response = await axios.post(endpoint, body, options);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 module.exports = {
   getContacts: (async (req,res) => {
@@ -89,31 +101,53 @@ module.exports = {
         const response = await getApi(apiUri, authResponse.accessToken);
         res.status(200).send(JSON.stringify(response.data))
     } catch (error) {
-        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' })
     }
   }),
 
   updateContact: (async (req,res) => {
-    // find user by B2C objectId to get contactId
     try {
-        // const oid = req._parsedUrl.query;
+        // find user by B2C objectId to get contactId
         const sub = req.body.idTokenClaims.sub;
         const firstname = req.body.idTokenClaims.firstname;
         const lastname = req.body.idTokenClaims.lastname;
         apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid," + `'${sub}'` + ")";
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
-        //res.status(200).send(JSON.stringify(response.data));
-        
+
         // Update user
         contactId = response.data.value[0].contactid;
         const body = {"firstname" : firstname, "lastname": lastname};
         const patchApiUri = apiConfig.uri + "/contacts(" + contactId + ")";
-        const response1 = await patchApi(patchApiUri, body, authResponse.accessToken);
-        res.status(200).send(JSON.stringify(response1.data))
+        await patchApi(patchApiUri, body, authResponse.accessToken);
+        res.status(200).send(JSON.stringify({"Transaction result": "User has been updated successfully"}))
 
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+  }),
+
+  createContact: (async (req,res) => {
+    try {
+        const sub = req.body.idTokenClaims.sub;
+        const firstname = req.body.idTokenClaims.firstname;
+        const lastname = req.body.idTokenClaims.lastname;
+        const email = req.body.idTokenClaims.email;
+        const authResponse = await getToken(tokenRequest);
+        // Create user
+        const body = {
+            "firstname" : firstname, 
+            "lastname": lastname, 
+            "emailaddress1": email,
+            "cr74b_b2c_objectid": sub
+        };
+        const createApiUri = apiConfig.uri + "/contacts";
+        await createApi(createApiUri, body, authResponse.accessToken);
+        res.status(200).send(JSON.stringify({"Transaction result": "User has been created successfully"}))
+
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' })
     }
   })
 };
