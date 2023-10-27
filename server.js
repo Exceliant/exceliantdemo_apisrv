@@ -36,9 +36,9 @@ app.patch(
  **************************************************************************/
 
 app.get(
-  "/dataverse/contacts",
-  guard.validateIdTokenClaims,
-  dataverseapi.getContacts
+  "/dataverse/getcontact",
+  guard.validateIdTokenClaimsFromUrl,
+  dataverseapi.getContact
 );
 
 app.post(

@@ -94,14 +94,20 @@ async function createApi(endpoint, body, accessToken) {
 
 
 module.exports = {
-  getContacts: (async (req,res) => {
+  getContact: (async (req,res) => {
     try {
-        apiUri = apiConfig.uri + "/contacts";
+        sub = Object.keys(req.query)[0];
+        apiUri = apiConfig.uri + "/contacts?$filter=cr74b_b2c_objectid eq " + sub + "&$select=contactid,firstname,lastname,emailaddress1,cr74b_b2c_objectid";
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
         res.status(200).send(JSON.stringify(response.data))
     } catch (error) {
+       if (error.response.status == 400) {
+        res.status(400).json({ error: error.message })
+       }
+       else {
         res.status(500).json({ error: 'Internal Server Error' })
+       }
     }
   }),
 
@@ -111,7 +117,7 @@ module.exports = {
         const sub = req.body.idTokenClaims.sub;
         const firstname = req.body.idTokenClaims.firstname;
         const lastname = req.body.idTokenClaims.lastname;
-        apiUri = apiConfig.uri + "/contacts?$filter=contains(cr74b_b2c_objectid," + `'${sub}'` + ")";
+        apiUri = apiConfig.uri + "/contacts?$filter=cr74b_b2c_objectid eq " + sub;
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
 

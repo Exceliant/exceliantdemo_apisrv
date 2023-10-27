@@ -9,4 +9,19 @@ module.exports = {
       res.status(400).send("400: Missing valid id_token");
     }
   },
+
+  validateIdTokenClaimsFromUrl: (req, res, next) => {
+    if (
+      Object.keys(req.query)[0] !== undefined &&
+      Object.keys(req.query)[0] !== ""
+    ) {
+      next();
+    } else {
+      res.status(400).send("400: Missing valid id_token");
+    }
+  },
 };
+
+
+
+
