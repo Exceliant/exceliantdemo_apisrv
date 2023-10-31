@@ -114,11 +114,9 @@ module.exports = {
   updateContact: (async (req,res) => {
     try {
         // find user by B2C objectId to get contactId
-        console.log("request!!!!!:", req.body.userData);
         const sub = req.body.idTokenClaims.sub;
         const firstname = req.body.userData.givenName;
         const lastname = req.body.userData.surname;
-        console.log("first and last names: ", firstname, lastname);
         apiUri = apiConfig.uri + "/contacts?$filter=cr74b_b2c_objectid eq " + `'${sub}'`;
         const authResponse = await getToken(tokenRequest);
         const response = await getApi(apiUri, authResponse.accessToken);
